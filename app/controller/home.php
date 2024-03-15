@@ -36,3 +36,19 @@ function main_home()
 
 }
 
+function main_search()
+{
+    // traitement éventuel des favoris
+    $fav_l = ctrl_process_fav_form();
+
+    // listing des articles favoris
+    $search_art = get_searched_article($_GET['search_kw']);
+    $side_art_html = html_listing_article( $search_art, $fav_l, "main" );
+
+    return join( "\n", [
+        ctrl_head(),
+        $side_art_html,
+        html_foot(),
+    ]);
+}
+

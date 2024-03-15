@@ -32,7 +32,7 @@ function html_breaking_article($art)
             $image_html = html_image($art['id']);
             break;
         case "MySql":
-            $image_html = html_image(-1, $art['image_name']);
+            $image_html = html_image(-1, $art['image_art']);
             break;
     }
     return <<< HTML
@@ -93,7 +93,16 @@ HTML;
 
 function html_article($art)
 {
-    $image_html = html_image($art['id']);
+    switch(DATABASE_TYPE) {
+        case "csv":
+            $image_html = html_image($art['id']);
+            break;
+        case "MySql":
+            $image_html = html_image(-1, $art['image_art']);
+            break;
+    }
+
+//    $image_html = html_image($art['id']);
     return <<< HTML
     <main>
         <article class="main_article">

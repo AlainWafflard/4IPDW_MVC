@@ -42,7 +42,7 @@ function get_breaking_article()
                     ident_art AS id,
                     title_art AS title,
                     hook_art AS hook,
-                    image_art AS image_name
+                    image_art
                 FROM `t_article` 
                 WHERE ident_art=$ident;
 SQL;
@@ -61,19 +61,37 @@ SQL;
  */
 function get_fav_article($fav_l)
 {
-    require "../asset/database/news.php";
-
-    $outart_a = [];
-    foreach( $news_a as $news )
-    {
-        if( in_array( $news['id'], $fav_l ) )
-        {
-            echo "news id : ".$news['id']."<br>";
-            var_dump($fav_l);
-            $outart_a[] = $news;
-        }
+    switch(DATABASE_TYPE) {
+        case "csv":
+            require "../asset/database/news.php";
+            $outart_a = [];
+            foreach ($news_a as $news) {
+                if (in_array($news['id'], $fav_l)) {
+                    echo "news id : " . $news['id'] . "<br>";
+                    var_dump($fav_l);
+                    $outart_a[] = $news;
+                }
+            }
+            return $outart_a;
+            break;
+        case "MySql":
+            // Establishing Connection with Database
+            $pdo = get_pdo();
+            unset($fav_l[0]);
+            $fav_l = array_values($fav_l);
+            $place_holders = implode(',', array_fill(0, count($fav_l), '?'));
+            $sql = <<< SQL
+                SELECT 
+                    ident_art AS id,
+                    title_art AS title
+                FROM `t_article` 
+                WHERE ident_art IN ($place_holders)
+SQL;
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($fav_l);
+            $outart_a = $stmt->fetchAll();
+            return $outart_a;
     }
-    return $outart_a;
 }
 
 
@@ -112,17 +130,62 @@ SQL;
  * @param $id l'if de l'article cherché
  * @return array|bool les données de l'article
  */
-function get_article($id)
+function get_article($ident_art)
 {
-    require "../asset/database/news.php";
-
-    foreach( $news_a as $news )
-    {
-        if( $id == $news['id'] )
-        {
-            return $news;
+    switch(DATABASE_TYPE) {
+        case "csv":
+            require "../asset/database/news.php";
+            foreach ($news_a as $news) {
+                if ($ident_art == $news['id']) {
+                    return $news;
+                }
+            }
+            return false;
+            break;
+        case "MySql":
+            // Establishing Connection with Database
+            $pdo = get_pdo();
+            $sql = <<< SQL
+                SELECT 
+                    *,
+                    ident_art AS id,
+                    title_art AS title,
+                    hook_art AS hook,
+                    content_art AS contents
+                FROM `t_article` 
+                WHERE ident_art= :ident_art
+SQL;
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                'ident_art' => $ident_art
+            ]);
+            $outart_a = $stmt->fetch();
+            return $outart_a;
+            break;
         }
     }
 
-    return false;
-}
+    function get_searched_article($search_kw)
+    {
+        switch(DATABASE_TYPE) {
+            case "MySql":
+                // Establishing Connection with Database
+                $pdo = get_pdo();
+                $sql = <<< SQL
+                    SELECT 
+                        ident_art AS id,
+                        title_art AS title
+                    FROM `t_article` 
+                    WHERE 
+                        title_art LIKE :kw OR hook_art LIKE :kw
+                    LIMIT 5;
+SQL;
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    'kw' => "%$search_kw%"
+                ]);
+                $outart_a = $stmt->fetchAll();
+                return $outart_a;
+        }
+    }
+
