@@ -26,6 +26,12 @@ h1
     text-align:center;
 }
 
+h1 img
+{
+    width: 50px;
+}
+
+
 div.button_bar
 {
     background-color:Cornsilk ;
