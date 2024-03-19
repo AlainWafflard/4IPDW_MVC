@@ -1,8 +1,17 @@
 <?php
 
-function html_image($id)
+function html_image($id, $fn="")
 {
-    $image = "illustration".$id.".jpg";
+    if( $id >= 0 )
+    {
+        // version CSV
+        $image = "illustration".$id.".jpg";
+    }
+    else
+    {
+        // version MySQL
+        $image = $fn;
+    }
     $image_path = "./asset/media_article/$image";
     $image_html = "";
     if(file_exists($image_path))
@@ -18,7 +27,14 @@ function html_breaking_article($art)
 {
     $html_theme_form = html_select_theme();
 
-    $image_html = html_image($art['id']);
+    switch(DATABASE_TYPE) {
+        case "csv":
+            $image_html = html_image($art['id']);
+            break;
+        case "MySql":
+            $image_html = html_image(-1, $art['image_art']);
+            break;
+    }
     return <<< HTML
         $html_theme_form
         <article class="breaking">
@@ -77,7 +93,16 @@ HTML;
 
 function html_article($art)
 {
-    $image_html = html_image($art['id']);
+    switch(DATABASE_TYPE) {
+        case "csv":
+            $image_html = html_image($art['id']);
+            break;
+        case "MySql":
+            $image_html = html_image(-1, $art['image_art']);
+            break;
+    }
+
+//    $image_html = html_image($art['id']);
     return <<< HTML
     <main>
         <article class="main_article">
