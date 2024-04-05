@@ -165,6 +165,33 @@ SQL;
         }
     }
 
+/**
+ * @param $id l'id de l'article cherché
+ * @return array|bool les données complémentaires de l'article
+ */
+function get_article_info($ident_art)
+{
+    switch(DATABASE_TYPE) {
+        case "MySql":
+            // Establishing Connection with Database
+            $pdo = get_pdo();
+            $sql = <<< SQL
+                SELECT 
+                    date_art,
+                    readtime_art
+                FROM `t_article` 
+                WHERE ident_art= :ident_art
+SQL;
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                'ident_art' => $ident_art
+            ]);
+            $outart_a = $stmt->fetch();
+            return $outart_a;
+            break;
+        }
+    }
+
     function get_searched_article($search_kw)
     {
         switch(DATABASE_TYPE) {

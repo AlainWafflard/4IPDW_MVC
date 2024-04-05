@@ -29,14 +29,23 @@ function html_head($menu_a=[], $theme="default")
         <link rel="stylesheet" href="bootstrap.css" />  <!-- lib externe -->
         <link rel="stylesheet" href="asset/css/main.css" /> <!-- lib interne / perso -->
         <link rel="stylesheet" href="asset/css/<?=$theme_fn?>" /> <!-- custom CSS -->
+        <script
+         src="https://code.jquery.com/jquery-3.4.1.js"
+         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+         crossorigin="anonymous"></script>
+        <script src="asset/js/favorite.js"></script>
+        <script src="asset/js/article_info.js"></script>
 	</head>
 	<body>
     <h1>
         France 24 (MVC)
-        <img src="./asset/media_general/icon3.png">
+        <!--<img src="./asset/media_general/icon3.png">-->
     </h1>
 	<?php
     echo html_menu($menu_a);
+    ?>
+    <aside id="article_info">blabla</aside>
+    <?php
 
 	if($debug)
 	{
@@ -53,6 +62,7 @@ function html_foot()
 	ob_start();
 	?>
         <hr />
+    Favoris : <ul id="favorite_summary"></ul>
 	</body>
 	</html>
 	<?php

@@ -1,6 +1,12 @@
 <?php
 define( "ROOT_DIR", "../app/" );
 
+/*
+ * on inclut les configs.
+ */
+require_once ( "../asset/config/app.php");
+require_once ( "../asset/config/model.php");
+
 /**
  * include all MVC PHP files
  */
@@ -34,7 +40,7 @@ session_start();
 include_mvc_php_files();
 
 // select page to load, ie. function to launch
-$page = @$_GET['page'] ?: 'home';
+$page = @$_REQUEST['page'] ?: 'home';
 $main = "main_{$page}";
 echo $main();
 

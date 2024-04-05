@@ -15,3 +15,12 @@ function main_article()
 
 }
 
+function main_article_info_ajax()
+{
+    $id = $_POST['id'];
+
+    $article_a = get_article_info($id);
+    $html_article = html_article_info($article_a);
+
+    return $html_article;
+}

@@ -49,6 +49,16 @@ HTML;
 
 function html_listing_article($art_a, $fav_a, $root_tag='aside', $next_page="press")
 {
+    switch(APP_FAVORITE_ARCH) {
+        case "form":
+            return html_listing_article_form($art_a, $fav_a, $root_tag = 'aside', $next_page = "press");
+        case "ajax":
+            return html_listing_article_ajax($art_a, $fav_a, $root_tag = 'aside', $next_page = "press");
+    }
+}
+
+function html_listing_article_form($art_a, $fav_a, $root_tag='aside', $next_page="press")
+{
     $html_s = <<< HTML
         <$root_tag>
 HTML;
@@ -91,6 +101,39 @@ HTML;
     return $html_s;
 }
 
+function html_listing_article_ajax($art_a, $fav_a, $root_tag='aside', $next_page="press")
+{
+    $html_s = <<< HTML
+        <$root_tag>
+HTML;
+    foreach( $art_a as $art)
+    {
+            $button_html = <<< HTML
+                    <button type="button" class="del_favorite" for="{$art['id']}">
+                        retirer du panier                    
+                    </button>
+            HTML;
+            // article non favori => fct "ajouter"
+            $button_html .= <<< HTML
+                    <button type="button" class="add_favorite" for="{$art['id']}">
+                        ajouter au panier                    
+                    </button>
+            HTML;
+        $html_s .= <<< HTML
+            <article class="side" for="{$art['id']}">
+                <a href="?page=article&id={$art['id']}">
+                    <h4>{$art['title']}</h4>
+                </a>    
+                $button_html   
+            </article>
+HTML;
+    }
+    $html_s .= <<< HTML
+        </$root_tag>
+HTML;
+    return $html_s;
+}
+
 function html_article($art)
 {
     switch(DATABASE_TYPE) {
@@ -114,4 +157,13 @@ function html_article($art)
     </main>
 HTML;
 
+}
+function html_article_info($art)
+{
+    return <<< HTML
+        <span>
+            Date : {$art['date_art']}, 
+            temps de lecture :  {$art['readtime_art']}
+        </span>
+HTML;
 }
